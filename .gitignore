@@ -1,0 +1,23 @@
+# Uploaded media (keep directory structure)
+uploads/images/*
+uploads/videos/*
+!uploads/images/.gitkeep
+!uploads/images/.htaccess
+!uploads/videos/.gitkeep
+!uploads/videos/.htaccess
+
+# Config with passwords - do not commit production config
+# data/config.php  ← keep this commented to include config template
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

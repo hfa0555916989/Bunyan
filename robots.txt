@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /admin332233/
+Disallow: /uploads/
+Disallow: /data/
+Disallow: /assets/js/
+Disallow: /assets/css/
+
+# Allow specific crawlers for images
+User-agent: Googlebot-Image
+Allow: /uploads/images/
+
+# Sitemaps
+Sitemap: https://bunyanraslan.com/sitemap.xml
