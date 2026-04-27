@@ -6,8 +6,10 @@ uploads/videos/*
 !uploads/videos/.gitkeep
 !uploads/videos/.htaccess
 
-# Config with passwords - do not commit production config
-# data/config.php  ← keep this commented to include config template
+# Live server data — never overwrite with git push
+data/settings.json
+data/media.json
+data/content.json
 
 # Logs
 *.log

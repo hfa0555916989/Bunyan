@@ -79,6 +79,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if ($action === 'save_services') {
+        $raw = $_POST['service_options'] ?? '';
+        // Clean lines
+        $lines = array_filter(array_map('trim', explode("\n", str_replace("\r", '', $raw))));
+        $s['service_options'] = implode("\n", array_values($lines));
+        saveSettings($s);
+        $success = 'تم حفظ خيارات الخدمة بنجاح';
+    }
+
     if ($action === 'save_stats') {
         $s['stats_projects'] = (int)($_POST['stats_projects'] ?? 150);
         $s['stats_years']    = (int)($_POST['stats_years']    ?? 12);
@@ -320,6 +329,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <button type="submit" class="btn-upload">
               <i class="fas fa-save"></i> حفظ بيانات التواصل
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ─── خيارات الخدمة ─── -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <i class="fas fa-list-check"></i> خيارات نوع الخدمة في فورم التواصل
+        </div>
+        <div class="settings-card-body">
+          <form method="POST">
+            <input type="hidden" name="action" value="save_services">
+            <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+            <div class="form-group">
+              <label>الخيارات (كل خيار في سطر منفصل)</label>
+              <textarea
+                name="service_options"
+                class="form-input"
+                style="min-height:180px;line-height:2;"
+                placeholder="مقاولات عامة&#10;بناء وتشييد&#10;تشطيب وديكور&#10;أخرى"
+              ><?= htmlspecialchars($s['service_options'] ?? '') ?></textarea>
+              <small style="color:var(--gray);font-size:0.75rem;margin-top:6px;display:block;">
+                <i class="fas fa-info-circle" style="color:var(--gold);"></i>
+                اكتب كل خيار في سطر جديد — سيظهر مباشرة في قائمة الخدمة بالموقع
+              </small>
+            </div>
+            <button type="submit" class="btn-upload">
+              <i class="fas fa-save"></i> حفظ الخيارات
             </button>
           </form>
         </div>

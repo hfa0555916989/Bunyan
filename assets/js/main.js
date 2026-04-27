@@ -157,23 +157,36 @@ document.getElementById('lb-close')?.addEventListener('click', closeLightbox);
 lightbox?.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
-// ─── Contact Form ───
+// ─── Contact Form → WhatsApp ───
 const contactForm = document.getElementById('contact-form');
-contactForm?.addEventListener('submit', async (e) => {
+contactForm?.addEventListener('submit', (e) => {
   e.preventDefault();
-  const btn = contactForm.querySelector('.btn-submit');
-  const msg = document.getElementById('form-msg');
-  btn.disabled = true;
-  btn.textContent = 'جاري الإرسال...';
+  const msg  = document.getElementById('form-msg');
 
-  // Simulate send (replace with actual endpoint)
-  await new Promise(r => setTimeout(r, 1200));
-  btn.disabled = false;
-  btn.textContent = 'إرسال الرسالة';
+  const name    = (contactForm.querySelector('[name="contact_name"]')?.value    || '').trim();
+  const phone   = (contactForm.querySelector('[name="contact_phone"]')?.value   || '').trim();
+  const service = (contactForm.querySelector('[name="contact_service"]')?.value || '').trim();
+  const message = (contactForm.querySelector('[name="contact_message"]')?.value || '').trim();
+
+  if (!name || !phone) {
+    msg.className = 'form-msg error';
+    msg.textContent = 'الرجاء إدخال الاسم ورقم الجوال';
+    return;
+  }
+
+  let text = `السلام عليكم،\nأنا *${name}*\n📱 رقم الجوال: ${phone}`;
+  if (service) text += `\n🔧 الخدمة المطلوبة: ${service}`;
+  if (message) text += `\n💬 ${message}`;
+  text += '\n\n_(من موقع بنيان رسلان للمقاولات)_';
+
+  const waNumber = (window.SITE_WA || '').replace(/[^0-9]/g, '');
+  const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`;
+  window.open(waUrl, '_blank');
+
   msg.className = 'form-msg success';
-  msg.textContent = 'تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.';
+  msg.textContent = 'سيتم فتح واتساب لإرسال رسالتك...';
   contactForm.reset();
-  setTimeout(() => { msg.className = 'form-msg'; }, 5000);
+  setTimeout(() => { msg.className = 'form-msg'; }, 4000);
 });
 
 // ─── Smooth scroll for anchor links ───

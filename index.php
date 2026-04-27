@@ -514,33 +514,36 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
       </div>
 
       <div class="contact-form reveal">
-        <h3><i class="fas fa-paper-plane" style="margin-left:8px;"></i> أرسل رسالتك</h3>
+        <h3><i class="fab fa-whatsapp" style="margin-left:8px;color:#25d366;"></i> أرسل رسالتك عبر واتساب</h3>
         <form id="contact-form" novalidate>
           <div class="form-group">
             <label>الاسم الكريم</label>
-            <input type="text" placeholder="أدخل اسمك" required>
+            <input type="text" name="contact_name" placeholder="أدخل اسمك" required>
           </div>
           <div class="form-group">
             <label>رقم الجوال</label>
-            <input type="tel" placeholder="05xxxxxxxx" required>
+            <input type="tel" name="contact_phone" placeholder="05xxxxxxxx" required>
           </div>
           <div class="form-group">
             <label>نوع الخدمة</label>
-            <select>
+            <select name="contact_service">
               <option value="">اختر الخدمة</option>
-              <option>شراء عقار</option>
-              <option>بيع عقار</option>
-              <option>تأجير</option>
-              <option>استشارة عقارية</option>
-              <option>أخرى</option>
+              <?php
+                $serviceOptions = array_filter(
+                  array_map('trim', explode("\n", $cfg['service_options'] ?? ''))
+                );
+                foreach ($serviceOptions as $opt):
+              ?>
+              <option><?= htmlspecialchars($opt) ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
           <div class="form-group">
-            <label>رسالتك</label>
-            <textarea placeholder="اكتب رسالتك هنا..." required></textarea>
+            <label>رسالتك <span style="color:var(--gray);font-size:0.78rem;">(اختياري)</span></label>
+            <textarea name="contact_message" placeholder="اكتب رسالتك هنا..."></textarea>
           </div>
-          <button type="submit" class="btn-submit">
-            <i class="fas fa-paper-plane" style="margin-left:8px;"></i> إرسال الرسالة
+          <button type="submit" class="btn-submit" style="background:linear-gradient(135deg,#25d366,#128c7e);">
+            <i class="fab fa-whatsapp" style="margin-left:8px;"></i> إرسال عبر واتساب
           </button>
           <div class="form-msg" id="form-msg"></div>
         </form>
@@ -610,6 +613,7 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
 </div>
 
 <!-- Scripts -->
+<script>window.SITE_WA = '<?= $whatsapp ?>';</script>
 <script src="/assets/js/main.js" defer></script>
 </body>
 </html>
