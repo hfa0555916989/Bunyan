@@ -6,6 +6,26 @@ $media = json_decode(file_get_contents(DATA_FILE), true) ?? ['images' => [], 'vi
 $images = $media['images'] ?? [];
 $videos = $media['videos'] ?? [];
 
+// Load dynamic settings
+$_settingsFile = __DIR__ . '/data/settings.json';
+$_settingsDefaults = [
+    'phone'          => SITE_PHONE,
+    'whatsapp'       => SITE_WHATSAPP,
+    'tiktok'         => SITE_TIKTOK,
+    'email'          => SITE_EMAIL,
+    'stats_projects' => '150',
+    'stats_years'    => '12',
+    'stats_clients'  => '5000',
+    'stats_cities'   => '25',
+];
+$cfg = array_merge($_settingsDefaults,
+    file_exists($_settingsFile) ? (json_decode(file_get_contents($_settingsFile), true) ?? []) : []
+);
+$phone    = $cfg['phone'];
+$whatsapp = preg_replace('/[^0-9]/', '', $cfg['whatsapp']);
+$tiktok   = $cfg['tiktok'];
+$email    = $cfg['email'];
+
 // SEO
 $page_title = SITE_NAME . ' | ' . SITE_NAME_EN;
 $page_desc = 'بنيان رسلان العقارية - شركة رائدة في مجال التطوير العقاري، نقدم أفضل المشاريع السكنية والتجارية بأعلى معايير الجودة والتميز. تواصل معنا اليوم.';
@@ -59,18 +79,18 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
     "url": "<?= SITE_URL ?>",
     "logo": "<?= SITE_URL ?>/assets/images/logo.png",
     "description": "<?= $page_desc ?>",
-    "telephone": "<?= SITE_PHONE ?>",
-    "email": "<?= SITE_EMAIL ?>",
+    "telephone": "<?= htmlspecialchars($phone) ?>",
+    "email": "<?= htmlspecialchars($email) ?>",
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "SA"
     },
     "sameAs": [
-      "<?= SITE_TIKTOK ?>"
+      "<?= htmlspecialchars($tiktok) ?>"
     ],
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "<?= SITE_PHONE ?>",
+      "telephone": "<?= htmlspecialchars($phone) ?>",
       "contactType": "customer service",
       "areaServed": "SA",
       "availableLanguage": "Arabic"
@@ -157,7 +177,7 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
     </ul>
 
     <div class="nav-actions">
-      <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', SITE_WHATSAPP) ?>" target="_blank" class="btn-whatsapp-nav">
+      <a href="https://wa.me/<?= $whatsapp ?>" target="_blank" class="btn-whatsapp-nav">
         <i class="fab fa-whatsapp"></i>
         <span>واتساب</span>
       </a>
@@ -193,7 +213,7 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
         <i class="fas fa-images"></i>
         مشاريعنا
       </a>
-      <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', SITE_WHATSAPP) ?>" target="_blank" class="btn-secondary">
+      <a href="https://wa.me/<?= $whatsapp ?>" target="_blank" class="btn-secondary">
         <i class="fab fa-whatsapp"></i>
         تواصل معنا
       </a>
@@ -201,27 +221,22 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
 
     <div class="hero-stats">
       <div class="stat-item">
-        <div class="stat-num" data-target="150" data-suffix="+">0+</div>
+        <div class="stat-num" data-target="<?= (int)$cfg['stats_projects'] ?>" data-suffix="+">0+</div>
         <div class="stat-label">مشروع منجز</div>
       </div>
       <div class="stat-item">
-        <div class="stat-num" data-target="12" data-suffix="+">0+</div>
+        <div class="stat-num" data-target="<?= (int)$cfg['stats_years'] ?>" data-suffix="+">0+</div>
         <div class="stat-label">سنة خبرة</div>
       </div>
       <div class="stat-item">
-        <div class="stat-num" data-target="5000" data-suffix="+">0+</div>
+        <div class="stat-num" data-target="<?= (int)$cfg['stats_clients'] ?>" data-suffix="+">0+</div>
         <div class="stat-label">عميل راضٍ</div>
       </div>
       <div class="stat-item">
-        <div class="stat-num" data-target="25" data-suffix="+">0+</div>
+        <div class="stat-num" data-target="<?= (int)$cfg['stats_cities'] ?>" data-suffix="+">0+</div>
         <div class="stat-label">مدينة</div>
       </div>
     </div>
-  </div>
-
-  <div class="hero-scroll">
-    <span>تصفح للأسفل</span>
-    <div class="arrow"></div>
   </div>
 </section>
 
@@ -410,38 +425,38 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
         <p>فريقنا المتخصص جاهز للإجابة على جميع استفساراتك وتقديم أفضل الحلول العقارية التي تناسب احتياجاتك وميزانيتك.</p>
 
         <div class="contact-links">
-          <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', SITE_WHATSAPP) ?>" target="_blank" class="contact-link whatsapp">
+          <a href="https://wa.me/<?= $whatsapp ?>" target="_blank" class="contact-link whatsapp">
             <div class="icon"><i class="fab fa-whatsapp"></i></div>
             <div class="info">
               <div class="label">واتساب</div>
-              <div class="value"><?= SITE_WHATSAPP ?></div>
+              <div class="value"><?= htmlspecialchars($cfg['whatsapp']) ?></div>
             </div>
             <i class="fas fa-arrow-left" style="color:var(--gray);"></i>
           </a>
 
-          <a href="tel:<?= SITE_PHONE ?>" class="contact-link phone">
+          <a href="tel:<?= htmlspecialchars($phone) ?>" class="contact-link phone">
             <div class="icon"><i class="fas fa-phone-alt"></i></div>
             <div class="info">
               <div class="label">الجوال</div>
-              <div class="value"><?= SITE_PHONE ?></div>
+              <div class="value"><?= htmlspecialchars($phone) ?></div>
             </div>
             <i class="fas fa-arrow-left" style="color:var(--gray);"></i>
           </a>
 
-          <a href="<?= SITE_TIKTOK ?>" target="_blank" class="contact-link tiktok">
+          <a href="<?= htmlspecialchars($tiktok) ?>" target="_blank" class="contact-link tiktok">
             <div class="icon"><i class="fab fa-tiktok"></i></div>
             <div class="info">
               <div class="label">تيك توك</div>
-              <div class="value">@bunyanraslan</div>
+              <div class="value"><?= htmlspecialchars(ltrim(parse_url($tiktok, PHP_URL_PATH), '/')) ?></div>
             </div>
             <i class="fas fa-arrow-left" style="color:var(--gray);"></i>
           </a>
 
-          <a href="mailto:<?= SITE_EMAIL ?>" class="contact-link email">
+          <a href="mailto:<?= htmlspecialchars($email) ?>" class="contact-link email">
             <div class="icon"><i class="fas fa-envelope"></i></div>
             <div class="info">
               <div class="label">البريد الإلكتروني</div>
-              <div class="value"><?= SITE_EMAIL ?></div>
+              <div class="value"><?= htmlspecialchars($email) ?></div>
             </div>
             <i class="fas fa-arrow-left" style="color:var(--gray);"></i>
           </a>
@@ -498,9 +513,9 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
         </div>
         <p>شركة رائدة في مجال التطوير العقاري، نبني أحلامكم بأعلى معايير الجودة والتميز في المملكة العربية السعودية.</p>
         <div class="footer-social">
-          <a href="<?= SITE_TIKTOK ?>" target="_blank" class="social-btn" title="تيك توك"><i class="fab fa-tiktok"></i></a>
-          <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', SITE_WHATSAPP) ?>" target="_blank" class="social-btn" title="واتساب"><i class="fab fa-whatsapp"></i></a>
-          <a href="tel:<?= SITE_PHONE ?>" class="social-btn" title="اتصل بنا"><i class="fas fa-phone-alt"></i></a>
+          <a href="<?= htmlspecialchars($tiktok) ?>" target="_blank" class="social-btn" title="تيك توك"><i class="fab fa-tiktok"></i></a>
+          <a href="https://wa.me/<?= $whatsapp ?>" target="_blank" class="social-btn" title="واتساب"><i class="fab fa-whatsapp"></i></a>
+          <a href="tel:<?= htmlspecialchars($phone) ?>" class="social-btn" title="اتصل بنا"><i class="fas fa-phone-alt"></i></a>
         </div>
       </div>
 
@@ -536,10 +551,10 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
 
 <!-- Floating Buttons -->
 <div class="float-buttons">
-  <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', SITE_WHATSAPP) ?>" target="_blank" class="float-btn whatsapp" title="واتساب">
+  <a href="https://wa.me/<?= $whatsapp ?>" target="_blank" class="float-btn whatsapp" title="واتساب">
     <i class="fab fa-whatsapp"></i>
   </a>
-  <a href="tel:<?= SITE_PHONE ?>" class="float-btn phone" title="اتصل بنا">
+  <a href="tel:<?= htmlspecialchars($phone) ?>" class="float-btn phone" title="اتصل بنا">
     <i class="fas fa-phone-alt"></i>
   </a>
 </div>
