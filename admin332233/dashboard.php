@@ -57,6 +57,9 @@ $uploadSizeMB = round($uploadSize / 1024 / 1024, 1);
       <i class="fas fa-film"></i> الفيديوهات
       <?php if ($totalVideos > 0): ?><span class="badge"><?= $totalVideos ?></span><?php endif; ?>
     </a>
+    <a href="/admin332233/content" class="nav-item">
+      <i class="fas fa-pen-to-square"></i> المحتوى
+    </a>
     <a href="/admin332233/settings" class="nav-item">
       <i class="fas fa-cog"></i> الإعدادات
     </a>

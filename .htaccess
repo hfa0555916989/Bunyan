@@ -22,6 +22,9 @@ RewriteRule ^(.*)$ $1.php [L,QSA]
 
 # Admin panel clean URL
 RewriteRule ^admin332233/?$ /admin332233/index.php [L,QSA]
+RewriteRule ^admin332233/dashboard/?$ /admin332233/dashboard.php [L,QSA]
+RewriteRule ^admin332233/content/?$ /admin332233/content.php [L,QSA]
+RewriteRule ^admin332233/settings/?$ /admin332233/settings.php [L,QSA]
 RewriteRule ^admin332233/logout/?$ /admin332233/logout.php [L,QSA]
 RewriteRule ^admin332233/upload/?$ /admin332233/upload.php [L,QSA]
 RewriteRule ^admin332233/delete/?$ /admin332233/delete.php [L,QSA]

@@ -23,6 +23,53 @@ $cfg = array_merge($_settingsDefaults,
 );
 $phone    = $cfg['phone'];
 $whatsapp = preg_replace('/[^0-9]/', '', $cfg['whatsapp']);
+
+// Load dynamic content
+$_contentFile = __DIR__ . '/data/content.json';
+$_contentDefaults = [
+    'hero_badge'        => 'شركة رائدة في مجال المقاولات',
+    'hero_title_1'      => 'بنيان رسلان',
+    'hero_title_2'      => 'للمقاولات',
+    'hero_subtitle'     => 'ننفذ مشاريع البناء والمقاولات بأعلى معايير الجودة، مع فريق متكامل من المهندسين المعتمدين والمشرفين المتخصصين في كل مشروع',
+    'about_tag'         => 'من نحن',
+    'about_title'       => 'نبني بإتقان',
+    'about_title_gold'  => 'بمهندسين ومشرفين محترفين',
+    'about_text'        => 'بنيان رسلان للمقاولات شركة متخصصة في تنفيذ مشاريع البناء والتشييد.',
+    'feature_1_title'   => 'مهندسون معتمدون',
+    'feature_1_desc'    => 'لكل مشروع فريق هندسي متخصص يشرف على كل مرحلة',
+    'feature_2_title'   => 'مشرفون ميدانيون',
+    'feature_2_desc'    => 'إشراف يومي على الموقع لضمان الجودة والسلامة',
+    'feature_3_title'   => 'جودة مواد البناء',
+    'feature_3_desc'    => 'نستخدم أفضل مواد البناء المعتمدة والموثوقة',
+    'feature_4_title'   => 'التزام بالمواعيد',
+    'feature_4_desc'    => 'ننجز مشاريعنا في الوقت المحدد دون تأخير',
+    'service_1_title'   => 'المقاولات العامة',
+    'service_1_desc'    => 'تنفيذ مشاريع البناء الكاملة من الأساسات حتى التسليم',
+    'service_2_title'   => 'البناء والتشييد',
+    'service_2_desc'    => 'إنشاء المباني السكنية والتجارية بأعلى معايير الجودة',
+    'service_3_title'   => 'الخرسانة والهيكل الإنشائي',
+    'service_3_desc'    => 'أعمال الخرسانة المسلحة بإشراف مهندسين إنشائيين معتمدين',
+    'service_4_title'   => 'التشطيب والديكور',
+    'service_4_desc'    => 'أعمال التشطيبات الداخلية والخارجية بأرقى المواصفات',
+    'service_5_title'   => 'البنية التحتية',
+    'service_5_desc'    => 'تنفيذ أعمال الطرق والشبكات والبنية التحتية',
+    'service_6_title'   => 'الصيانة والإصلاح',
+    'service_6_desc'    => 'خدمات صيانة شاملة للمباني والمنشآت',
+    'gallery_title'     => 'مشاريعنا',
+    'gallery_title_gold'=> 'بالصور والفيديو',
+    'gallery_desc'      => 'استعرض أحدث مشاريع المقاولات وإنجازاتنا الميدانية',
+    'contact_title'     => 'نحن هنا',
+    'contact_title_gold'=> 'لخدمتك',
+    'contact_desc'      => 'تواصل معنا الآن للحصول على عرض سعر مجاني وفريق من المهندسين جاهز لخدمتك',
+    'footer_about'      => 'شركة متخصصة في مجال المقاولات والبناء والتشييد بأعلى معايير الجودة.',
+];
+$c = array_merge($_contentDefaults,
+    file_exists($_contentFile) ? (json_decode(file_get_contents($_contentFile), true) ?? []) : []
+);
+function ct(string $key): string {
+    global $c;
+    return htmlspecialchars($c[$key] ?? '');
+}
 $tiktok   = $cfg['tiktok'];
 $email    = $cfg['email'];
 
@@ -196,16 +243,16 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
   <div class="hero-content">
     <div class="hero-badge">
       <span class="dot"></span>
-      شركة رائدة في التطوير العقاري
+      <?= ct('hero_badge') ?>
     </div>
 
     <h1 class="hero-title">
-      <span class="gold">بنيان رسلان</span><br>
-      <span>العقارية</span>
+      <span class="gold"><?= ct('hero_title_1') ?></span><br>
+      <span><?= ct('hero_title_2') ?></span>
     </h1>
 
     <p class="hero-subtitle">
-      نبني أحلامكم بأعلى معايير الجودة والتميز، ونوفر لكم أفضل المشاريع السكنية والتجارية في المملكة العربية السعودية
+      <?= ct('hero_subtitle') ?>
     </p>
 
     <div class="hero-cta">
@@ -245,51 +292,49 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
   <div class="container">
     <div class="about-grid">
       <div class="about-image reveal">
-        <img src="/assets/images/about.jpg" alt="بنيان رسلان العقارية" onerror="this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80'">
+        <img src="/assets/images/about.jpg" alt="بنيان رسلان للمقاولات" onerror="this.src='https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80'">
         <div class="overlay-badge">
-          <div class="num">+12</div>
-          <div class="lbl">سنة من التميز</div>
+          <div class="num">+<?= (int)$cfg['stats_years'] ?></div>
+          <div class="lbl">سنة من الخبرة</div>
         </div>
       </div>
 
       <div class="about-content">
         <div class="section-header" style="text-align:right;margin-bottom:32px;">
-          <div class="section-tag">من نحن</div>
-          <h2 class="section-title">نبني المستقبل <span class="gold">بثقة واحترافية</span></h2>
+          <div class="section-tag"><?= ct('about_tag') ?></div>
+          <h2 class="section-title"><?= ct('about_title') ?> <span class="gold"><?= ct('about_title_gold') ?></span></h2>
           <div class="gold-line" style="margin:16px 0 0;"></div>
         </div>
 
-        <p class="reveal">
-          بنيان رسلان العقارية شركة رائدة في مجال التطوير العقاري، تأسست على مبادئ الجودة والأمانة والابتكار. نسعى دائماً لتقديم أفضل الحلول العقارية التي تلبي تطلعات عملائنا وتتجاوز توقعاتهم.
-        </p>
+        <p class="reveal"><?= ct('about_text') ?></p>
 
         <div class="about-features">
           <div class="feature-item reveal">
+            <div class="feature-icon"><i class="fas fa-hard-hat"></i></div>
+            <div class="feature-text">
+              <h4><?= ct('feature_1_title') ?></h4>
+              <p><?= ct('feature_1_desc') ?></p>
+            </div>
+          </div>
+          <div class="feature-item reveal">
+            <div class="feature-icon"><i class="fas fa-user-tie"></i></div>
+            <div class="feature-text">
+              <h4><?= ct('feature_2_title') ?></h4>
+              <p><?= ct('feature_2_desc') ?></p>
+            </div>
+          </div>
+          <div class="feature-item reveal">
             <div class="feature-icon"><i class="fas fa-medal"></i></div>
             <div class="feature-text">
-              <h4>جودة لا تُنافس</h4>
-              <p>نستخدم أفضل المواد وأحدث تقنيات البناء</p>
+              <h4><?= ct('feature_3_title') ?></h4>
+              <p><?= ct('feature_3_desc') ?></p>
             </div>
           </div>
           <div class="feature-item reveal">
-            <div class="feature-icon"><i class="fas fa-handshake"></i></div>
+            <div class="feature-icon"><i class="fas fa-clock"></i></div>
             <div class="feature-text">
-              <h4>ثقة واحترافية</h4>
-              <p>علاقات طويلة الأمد مبنية على الشفافية والأمانة</p>
-            </div>
-          </div>
-          <div class="feature-item reveal">
-            <div class="feature-icon"><i class="fas fa-map-marked-alt"></i></div>
-            <div class="feature-text">
-              <h4>مواقع استراتيجية</h4>
-              <p>مشاريع في أفضل المواقع بكبرى المدن السعودية</p>
-            </div>
-          </div>
-          <div class="feature-item reveal">
-            <div class="feature-icon"><i class="fas fa-headset"></i></div>
-            <div class="feature-text">
-              <h4>دعم متواصل</h4>
-              <p>فريق متخصص لخدمتك على مدار الساعة</p>
+              <h4><?= ct('feature_4_title') ?></h4>
+              <p><?= ct('feature_4_desc') ?></p>
             </div>
           </div>
         </div>
@@ -304,40 +349,40 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
     <div class="section-header reveal">
       <div class="section-tag">خدماتنا</div>
       <h2 class="section-title">ماذا <span class="gold">نقدم لك؟</span></h2>
-      <p class="section-desc">نوفر طيفاً واسعاً من الخدمات العقارية المتكاملة لتلبية جميع احتياجاتك</p>
+      <p class="section-desc">نوفر خدمات مقاولات متكاملة مع فريق من المهندسين والمشرفين لكل مشروع</p>
       <div class="gold-line"></div>
     </div>
 
     <div class="services-grid">
       <div class="service-card reveal">
         <div class="service-icon"><i class="fas fa-building"></i></div>
-        <h3>المشاريع السكنية</h3>
-        <p>شقق وفلل ومجمعات سكنية متكاملة بتصاميم عصرية وأسعار تنافسية</p>
-      </div>
-      <div class="service-card reveal">
-        <div class="service-icon"><i class="fas fa-store"></i></div>
-        <h3>المشاريع التجارية</h3>
-        <p>مراكز تجارية ومكاتب ومحلات في أفضل المواقع الاستراتيجية</p>
+        <h3><?= ct('service_1_title') ?></h3>
+        <p><?= ct('service_1_desc') ?></p>
       </div>
       <div class="service-card reveal">
         <div class="service-icon"><i class="fas fa-hard-hat"></i></div>
-        <h3>إدارة المشاريع</h3>
-        <p>إشراف متكامل على جميع مراحل التطوير من التصميم حتى التسليم</p>
-      </div>
-      <div class="service-card reveal">
-        <div class="service-icon"><i class="fas fa-chart-line"></i></div>
-        <h3>الاستشارات العقارية</h3>
-        <p>خدمات استشارية متخصصة لمساعدتك في اتخاذ أفضل القرارات الاستثمارية</p>
-      </div>
-      <div class="service-card reveal">
-        <div class="service-icon"><i class="fas fa-key"></i></div>
-        <h3>بيع وتأجير العقارات</h3>
-        <p>محفظة متنوعة من العقارات للبيع والإيجار تناسب جميع الميزانيات</p>
+        <h3><?= ct('service_2_title') ?></h3>
+        <p><?= ct('service_2_desc') ?></p>
       </div>
       <div class="service-card reveal">
         <div class="service-icon"><i class="fas fa-drafting-compass"></i></div>
-        <h3>التصميم المعماري</h3>
-        <p>فريق من المهندسين والمصممين لتحويل أفكارك إلى واقع مبهر</p>
+        <h3><?= ct('service_3_title') ?></h3>
+        <p><?= ct('service_3_desc') ?></p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-paint-roller"></i></div>
+        <h3><?= ct('service_4_title') ?></h3>
+        <p><?= ct('service_4_desc') ?></p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-road"></i></div>
+        <h3><?= ct('service_5_title') ?></h3>
+        <p><?= ct('service_5_desc') ?></p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-tools"></i></div>
+        <h3><?= ct('service_6_title') ?></h3>
+        <p><?= ct('service_6_desc') ?></p>
       </div>
     </div>
   </div>
@@ -348,8 +393,8 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
   <div class="container">
     <div class="section-header reveal">
       <div class="section-tag">معرضنا</div>
-      <h2 class="section-title">مشاريعنا <span class="gold">بالصور والفيديو</span></h2>
-      <p class="section-desc">استعرض أحدث مشاريعنا وإنجازاتنا</p>
+      <h2 class="section-title"><?= ct('gallery_title') ?> <span class="gold"><?= ct('gallery_title_gold') ?></span></h2>
+      <p class="section-desc"><?= ct('gallery_desc') ?></p>
       <div class="gold-line"></div>
     </div>
 
@@ -415,8 +460,8 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
   <div class="container">
     <div class="section-header reveal">
       <div class="section-tag">تواصل معنا</div>
-      <h2 class="section-title">نحن هنا <span class="gold">لخدمتك</span></h2>
-      <p class="section-desc">تواصل معنا الآن واحصل على استشارة مجانية من خبرائنا</p>
+      <h2 class="section-title"><?= ct('contact_title') ?> <span class="gold"><?= ct('contact_title_gold') ?></span></h2>
+      <p class="section-desc"><?= ct('contact_desc') ?></p>
       <div class="gold-line"></div>
     </div>
 
@@ -511,7 +556,7 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
             <div style="font-size:0.75rem;color:var(--gray);">العقارية</div>
           </div>
         </div>
-        <p>شركة رائدة في مجال التطوير العقاري، نبني أحلامكم بأعلى معايير الجودة والتميز في المملكة العربية السعودية.</p>
+        <p><?= ct('footer_about') ?></p>
         <div class="footer-social">
           <a href="<?= htmlspecialchars($tiktok) ?>" target="_blank" class="social-btn" title="تيك توك"><i class="fab fa-tiktok"></i></a>
           <a href="https://wa.me/<?= $whatsapp ?>" target="_blank" class="social-btn" title="واتساب"><i class="fab fa-whatsapp"></i></a>
