@@ -23,6 +23,11 @@ $cfg = array_merge($_settingsDefaults,
 );
 $phone    = $cfg['phone'];
 $whatsapp = preg_replace('/[^0-9]/', '', $cfg['whatsapp']);
+$logoFile = $cfg['logo_file'] ?? 'logo.png';
+$logoSrc  = '/assets/images/' . htmlspecialchars($logoFile);
+$logoCacheBust = file_exists(__DIR__ . '/assets/images/' . $logoFile)
+    ? '?v=' . filemtime(__DIR__ . '/assets/images/' . $logoFile)
+    : '';
 
 // Load dynamic content
 $_contentFile = __DIR__ . '/data/content.json';
@@ -124,7 +129,7 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
     "name": "<?= SITE_NAME ?>",
     "alternateName": "<?= SITE_NAME_EN ?>",
     "url": "<?= SITE_URL ?>",
-    "logo": "<?= SITE_URL ?>/assets/images/logo.png",
+    "logo": "<?= SITE_URL ?>/assets/images/<?= htmlspecialchars($logoFile) ?>",
     "description": "<?= $page_desc ?>",
     "telephone": "<?= htmlspecialchars($phone) ?>",
     "email": "<?= htmlspecialchars($email) ?>",
@@ -200,7 +205,7 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
 
 <!-- Loader -->
 <div id="loader">
-  <img src="/assets/images/logo.png" alt="<?= SITE_NAME ?>" class="loader-logo" onerror="this.style.display='none'">
+  <img src="<?= $logoSrc . $logoCacheBust ?>" alt="<?= SITE_NAME ?>" class="loader-logo" onerror="this.style.display='none'">
   <div style="font-size:1.5rem;font-weight:900;color:#c9a84c;font-family:Tajawal,sans-serif;">بنيان رسلان</div>
   <div class="loader-bar"></div>
 </div>
@@ -212,7 +217,7 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
 <nav id="navbar">
   <div class="nav-inner">
     <a href="/" class="nav-logo">
-      <img src="/assets/images/logo.png" alt="<?= SITE_NAME ?>" onerror="this.style.display='none'">
+      <img src="<?= $logoSrc . $logoCacheBust ?>" alt="<?= SITE_NAME ?>" onerror="this.style.display='none'">
     </a>
 
     <ul class="nav-links">
@@ -550,7 +555,7 @@ $og_image = SITE_URL . '/assets/images/og-image.jpg';
     <div class="footer-grid">
       <div class="footer-brand">
         <div class="logo-wrap">
-          <img src="/assets/images/logo.png" alt="<?= SITE_NAME ?>" onerror="this.style.display='none'">
+          <img src="<?= $logoSrc . $logoCacheBust ?>" alt="<?= SITE_NAME ?>" onerror="this.style.display='none'">
           <div>
             <div style="font-size:1.1rem;font-weight:800;color:var(--gold);">بنيان رسلان</div>
             <div style="font-size:0.75rem;color:var(--gray);">العقارية</div>

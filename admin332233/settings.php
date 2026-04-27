@@ -32,6 +32,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifyCsrf();
     $action = $_POST['action'] ?? '';
 
+    if ($action === 'upload_logo') {
+        if (!isset($_FILES['logo']) || $_FILES['logo']['error'] !== UPLOAD_ERR_OK) {
+            $error = 'الرجاء اختيار ملف صورة';
+        } else {
+            $mime = mime_content_type($_FILES['logo']['tmp_name']);
+            if (!in_array($mime, ['image/jpeg','image/png','image/webp','image/svg+xml'], true)) {
+                $error = 'يُسمح فقط بـ PNG, JPG, WebP, SVG';
+            } elseif ($_FILES['logo']['size'] > 5 * 1024 * 1024) {
+                $error = 'حجم الشعار يتجاوز 5 MB';
+            } else {
+                $ext     = in_array($mime, ['image/svg+xml']) ? 'svg' : pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
+                $destDir = __DIR__ . '/../assets/images/';
+                if (!is_dir($destDir)) mkdir($destDir, 0755, true);
+                // Keep backup of old logo
+                $oldLogo = $destDir . 'logo.png';
+                if (file_exists($oldLogo)) copy($oldLogo, $destDir . 'logo_backup.png');
+                $newFile = $destDir . 'logo.' . strtolower($ext ?: 'png');
+                if (move_uploaded_file($_FILES['logo']['tmp_name'], $newFile)) {
+                    // If new ext differs from png, update pointer
+                    $s['logo_file'] = 'logo.' . strtolower($ext ?: 'png');
+                    saveSettings($s);
+                    $success = 'تم رفع الشعار بنجاح! سيظهر على الموقع فوراً';
+                } else {
+                    $error = 'فشل في حفظ الشعار، تحقق من صلاحيات المجلد';
+                }
+            }
+        }
+    }
+
     if ($action === 'save_contact') {
         $phone    = trim($_POST['phone'] ?? '');
         $whatsapp = trim($_POST['whatsapp'] ?? '');
@@ -128,6 +157,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       border-radius: var(--radius-sm);
       margin-top: 4px;
     }
+    .logo-upload-wrap {
+      display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+    }
+    .logo-preview-box {
+      width: 140px; height: 100px; flex-shrink: 0;
+      background: rgba(255,255,255,0.04);
+      border: 2px dashed rgba(201,168,76,0.3);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .logo-preview-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .logo-preview-box .no-logo { color: var(--gray); font-size: 0.78rem; text-align: center; padding: 8px; }
+    .logo-drop {
+      flex: 1;
+      border: 2px dashed rgba(255,255,255,0.12);
+      border-radius: var(--radius-sm);
+      padding: 28px 20px;
+      text-align: center; cursor: pointer;
+      transition: all 0.3s;
+    }
+    .logo-drop:hover { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+    .logo-drop .drop-icon { font-size: 1.8rem; color: var(--gold); opacity: 0.7; margin-bottom: 8px; }
+    .logo-drop .drop-text { font-size: 0.9rem; color: var(--white); }
+    .logo-drop .drop-hint { font-size: 0.75rem; color: var(--gray); margin-top: 4px; }
     .stat-preview .big { font-size: 1.8rem; font-weight: 900; color: var(--gold); }
     .stat-preview .lbl { font-size: 0.75rem; color: var(--gray); }
   </style>
@@ -167,6 +221,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($error): ?>
     <div class="alert error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
+
+    <!-- ─── رفع الشعار (full width) ─── -->
+    <div class="settings-card" style="margin-bottom:24px;">
+      <div class="settings-card-header">
+        <i class="fas fa-image"></i> شعار الموقع
+      </div>
+      <div class="settings-card-body">
+        <form method="POST" enctype="multipart/form-data" id="logoForm">
+          <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+          <input type="hidden" name="action" value="upload_logo">
+          <div class="logo-upload-wrap">
+            <div class="logo-preview-box" id="logoPreviewBox">
+              <?php
+                $logoFile = $s['logo_file'] ?? 'logo.png';
+                $logoPath = __DIR__ . '/../assets/images/' . $logoFile;
+              ?>
+              <?php if (file_exists($logoPath)): ?>
+                <img src="/assets/images/<?= htmlspecialchars($logoFile) ?>?v=<?= filemtime($logoPath) ?>" id="logoPreviewImg" alt="الشعار الحالي">
+              <?php else: ?>
+                <div class="no-logo" id="logoPreviewImg"><i class="fas fa-image" style="font-size:2rem;display:block;margin-bottom:6px;"></i>لا يوجد شعار</div>
+              <?php endif; ?>
+            </div>
+            <div class="logo-drop" id="logoDrop" onclick="document.getElementById('logoFile').click()">
+              <div class="drop-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+              <div class="drop-text">اضغط لاختيار الشعار أو اسحبه هنا</div>
+              <div class="drop-hint">PNG, JPG, WebP, SVG — حد أقصى 5 MB</div>
+              <input type="file" name="logo" id="logoFile" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <button type="submit" class="btn-upload" style="width:auto;" id="logoBtn">
+              <i class="fas fa-upload"></i> رفع الشعار
+            </button>
+            <span style="font-size:0.8rem;color:var(--gray);">
+              <i class="fas fa-info-circle" style="color:var(--gold);"></i>
+              سيتم تحديث الشعار في كل صفحات الموقع فوراً بعد الرفع
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <div class="settings-grid">
 
@@ -339,6 +434,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     inp.addEventListener('input', () => {
       prev.textContent = '+' + (inp.value || '0');
     });
+  });
+
+  // Logo preview before upload
+  const logoFile = document.getElementById('logoFile');
+  const logoDrop = document.getElementById('logoDrop');
+  const previewBox = document.getElementById('logoPreviewBox');
+
+  logoFile?.addEventListener('change', () => {
+    const file = logoFile.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      previewBox.innerHTML = `<img src="${e.target.result}" style="max-width:100%;max-height:100%;object-fit:contain;" alt="معاينة">`;
+    };
+    reader.readAsDataURL(file);
+    logoDrop.querySelector('.drop-text').textContent = file.name;
+  });
+
+  // Drag & Drop for logo
+  logoDrop?.addEventListener('dragover', e => { e.preventDefault(); logoDrop.style.borderColor = 'var(--gold)'; });
+  logoDrop?.addEventListener('dragleave', () => { logoDrop.style.borderColor = ''; });
+  logoDrop?.addEventListener('drop', e => {
+    e.preventDefault(); logoDrop.style.borderColor = '';
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    const dt = new DataTransfer(); dt.items.add(file); logoFile.files = dt.files;
+    logoFile.dispatchEvent(new Event('change'));
   });
 </script>
 </body>
